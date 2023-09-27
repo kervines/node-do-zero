@@ -1,28 +1,45 @@
-/* Criado sem framework
-
-import { createServer } from 'node:http';
-
-const server = createServer((request, response) => {
-  response.write('Hello World');
-  return response.end();
-});
-
-server.listen(3333); //cria servidor localhost na porta 3333
-*/
-
-//Criado com fastify
 import { fastify } from 'fastify';
+import { DatabaseMemory } from './database-memory.js';
 
 const server = fastify();
+const database = new DatabaseMemory();
 
-server.get('/', () => {
-  return 'Hello World';
+server.post('/videos', (request, reply) => {
+  const { title, description, duration } = request.body;
+  database.create({
+    title,
+    description,
+    duration,
+  });
+  return reply.status(201).send();
 });
-server.get('/hello', () => {
-  return 'Hello Amigos';
+
+server.get('/videos', (request) => {
+  const search = request.query.search;
+
+  const videos = database.list(search);
+
+  return videos;
 });
-server.get('/node', () => {
-  return 'Hello Node.js';
+
+server.put('/videos/:id', (request, reply) => {
+  const videoId = request.params.id;
+  const { title, description, duration } = request.body;
+
+  database.update(videoId, {
+    title,
+    description,
+    duration,
+  });
+
+  return reply.status(204);
+});
+
+server.delete('/videos/:id', (request, reply) => {
+  const videoId = request.params.id;
+
+  database.delete(videoId);
+  return reply.status(204).send();
 });
 
 server.listen({
