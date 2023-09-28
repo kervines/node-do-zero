@@ -9,6 +9,8 @@
   - Framework
   - Criação de servidor HTTP nativo
   - Criação de API REST
+    - Fastify
+    - CRUD (Create, Read, Update, Delete)
   - Banco de dados em memória
  
   Links Download:
